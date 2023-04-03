@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en"></html>
+<html>
+<head>
+	<title>Health Goals Survey</title>
+</head>
+<body>
+	<h1>Health Goals Survey</h1>
+	<p>Hello there! Let's get started on your health goals.</p>
+	<form action="/resultstable.html" method="POST">
+		<p>First off, what are your specific health goals? Are you looking to lose weight, gain muscle mass, or improve your overall health?</p>
+		<label for="goals">My goals are:</label><br>
+		<input type="text" id="goals" name="goals"><br>
+
+
+		<p>What type of food do you enjoy? Do you have any favorite cuisines or dishes?</p>
+		<label for="food-preferences">I enjoy eating:</label><br>
+		<input type="text" id="food-preferences" name="food-preferences"><br>
+
+		<p>Do you have any dietary restrictions or allergies that we should know about?</p>
+		<label for="dietary-restrictions">I can't eat:</label><br>
+		<input type="text" id="dietary-restrictions" name="dietary-restrictions"><br>
+
+		<p>May I ask how old you are? This information is important in estimating your caloric needs.</p>
+		<label for="age">I am:</label><br>
+		<input type="number" id="age" name="age"><br>
+
+		<p>What is your gender?</p>
+		<label for="gender">I am:</label><br>
+		<select id="gender" name="gender">
+			<option value="male">Male</option>
+			<option value="female">Female</option>
+			<option value="other">Other</option>
+		</select><br>
+
+		<p>How tall are you?</p>
+		<label for="height">I am:</label><br>
+		<input type="number" id="height" name="height"><br>
+
+		<p>And how much do you weigh?</p>
+		<label for="weight">I weigh:</label><br>
+		<input type="number" id="weight" name="weight"><br>
+
+		<p>Finally, can you tell me a bit about your activity level? This includes both exercise and non-exercise physical activity, such as walking, standing, and fidgeting.</p>
+		<label for="activity-level">My activity level is:</label><br>
+			<input type="text" id="activity-level" name="activity-level"><br>
+
+		<br>
+		<input type="submit" value="Submit">
+	</form>
+</body>
+</html>

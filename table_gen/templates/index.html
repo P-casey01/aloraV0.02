@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<title>Health Goals Survey</title>
+	<link rel="stylesheet" type="text/css" href="static/css/chatbot-style.css">
+
+</head>
+	
+<body>
+	<form action="/resultstable.html" method="POST">
+
+	<div class="chat-container">
+		<div class="chat-bubble bot">
+			<h1>Im alora your personal dietien</h1>
+			<p>Hello there! Let's get started on your health goals.</p>
+		</div>
+		<div class="chat-bubble user">
+			<p>First off, what are your specific health goals? Are you looking to lose weight, gain muscle mass, or improve your overall health?</p>
+			<label for="goals">My goals are:</label><br>
+			<input type="text" id="goals" name="goals"><br>
+		</div>
+		<div class="chat-bubble bot">
+			<p>What type of food do you enjoy? Do you have any favorite cuisines or dishes?</p>
+			<label for="food-preferences">I enjoy eating:</label><br>
+			<input type="text" id="food-preferences" name="food-preferences"><br>
+		</div>
+		<div class="chat-bubble user">
+			<p>Do you have any dietary restrictions or allergies that we should know about?</p>
+			<label for="dietary-restrictions">I can't eat:</label><br>
+			<input type="text" id="dietary-restrictions" name="dietary-restrictions"><br>
+		</div>
+		<div class="chat-bubble bot">
+			<p>May I ask how old you are? This information is important in estimating your caloric needs.</p>
+			<label for="age">I am:</label><br>
+			<input type="number" id="age" name="age"><br>
+		</div>
+		<div class="chat-bubble user">
+			<p>What is your gender?</p>
+			<label for="gender">I am:</label><br>
+			<select id="gender" name="gender">
+				<option value="male">Male</option>
+				<option value="female">Female</option>
+				<option value="other">Other</option>
+			</select><br>
+		</div>
+		<div class="chat-bubble bot">
+			<p>How tall are you?</p>
+			<label for="height">I am:</label><br>
+			<input type="number" id="height" name="height"><br>
+		</div>
+		<div class="chat-bubble user">
+			<p>And how much do you weigh?</p>
+			<label for="weight">I weigh:</label><br>
+			<input type="number" id="weight" name="weight"><br>
+		</div>		<div class="chat-bubble user">
+			<p>how much time would you like to spend cooking each meal?</p>
+			<label for="time">I would like to spend this long cooking meals</label><br>
+			<input type="text" id="time" name="time"><br>
+		</div>
+		<div class="chat-bubble bot">
+			<p>Finally, can you tell me a bit about your activity level? This includes both exercise and non-exercise physical activity, such as walking, standing, and fidgeting.</p>
+			<label for="activity-level">My activity level is:</label><br>
+			<input type="text" id="activity-level" name="activity-level"><br>
+		</div>
+		<div class="chat-bubble user">
+			<input type="submit" value="Submit">
+
+
+	</form>
+</body>
+</html>

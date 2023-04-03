@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 6 Meal Plan</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <input type="hidden" id="mealPlanId" value="{{ meal_plan_id }}">
+
+    <div class="container">
+        <h1>Day 6 Meal Plan</h1>
+        <button id="previousDay" onclick="previousDay()">Previous Day</button>
+        <button id="nextDay" onclick="nextDay()">Next Day</button>
+        <table>
+            <tr>
+                <th>Meal Name</th>
+                <th>Ingredients</th>
+                <th>Nutritional Content</th>
+                <th>Instructions</th>
+            </tr>
+            <tbody id="mealPlanTable">
+                {% for meal in meal_data %}
+                <tr>
+                    <td>{{ meal.meal_name }}</td>
+                    <td>{{ meal.ingredients | safe }}</td>
+                    <td>{{ meal.nutritional_content | safe }}</td>
+                    <td>{{ meal.instructions | safe }}</td>
+                </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+    <script>
+        let currentPage = 6;
+        
+        function previousDay() {
+    const mealPlanId = document.getElementById("mealPlanId").value;
+    if (currentPage > 1) {
+        currentPage -= 1;
+        window.location.href = `/day${currentPage}?meal_plan_id=${mealPlanId}`;
+    }
+}
+
+function nextDay() {
+    const mealPlanId = document.getElementById("mealPlanId").value;
+    const TOTAL_DAYS = 7;
+    if (currentPage < TOTAL_DAYS) {
+        currentPage += 1;
+        window.location.href = `/day${currentPage}?meal_plan_id=${mealPlanId}`;
+    }
+}
+
+    </script>
+</body>
+</html>

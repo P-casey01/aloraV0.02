@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meal Plan Table</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Meal Plan</h1>
+        <button id="previousDay" onclick="previousDay()">Previous Day</button>
+        <button id="nextDay" onclick="nextDay()">Next Day</button>
+        <table>
+            <tr>
+                <th>Day</th>
+                <th>Meal Name</th>
+                <th>Ingredients</th>
+                <th>Nutritional Content</th>
+                <th>Instructions</th>
+            </tr>
+            <tbody id="mealPlanTable">
+                <!-- Meal plan rows will be added here using JavaScript -->
+            </tbody>
+        </table>
+    </div>
+    <script data-meal-plan="{{ meal_plan_json | safe }}" src="{{ url_for('static', filename='js/table.js') }}"></script>
+</body>
+</html>
