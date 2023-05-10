@@ -1,93 +1,288 @@
-<!DOCTYPE html>
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+
+
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-	<title>Health Goals Survey</title>
-	<link rel="stylesheet" type="text/css" href="static/css/chatbot-style.css">
-    <script>
-        // Add this function to handle form submission and show the loading screen
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+        <title>Alora-Ai</title>
+        
+        <link rel="stylesheet" type="text/css" href="static/css/chatbot-style.css">
+       
+        <script>
         function showLoadingScreen() {
-            document.getElementById('loading-overlay').style.display = 'flex';
+    document.getElementById('loading-overlay').style.display = 'flex';
+}
+
+let currentQuestion = 0;
+const questions = [
+    'question1',
+    'question2',
+    'question3',
+    'question4',
+    'question5',
+    'question6',
+    'question7',
+    'question8',
+    'question9',
+];
+
+
+const inputIds = [
+    'goals',
+    'food-preferences',
+    'dietary-restrictions',
+    'age',
+    'gender',
+    'height',
+    'weight',
+    'time',
+    'activity-level',
+];
+
+// Typewriter effect
+function typeWriter(elementId, text, elementsToDisplay, index = 0, callback) {
+    if (index < text.length) {
+        document.getElementById(elementId).innerHTML += text.charAt(index);
+        setTimeout(() => typeWriter(elementId, text, elementsToDisplay, index + 1, callback), 50);
+    } else {
+        if (callback) {
+            callback();
         }
-    </script>
-</head>
-<header>
-	<nav>
-		<a href="{{ url_for('auth.logout') }}">Logout</a>
-	</nav>
-</header>
+        if (elementsToDisplay) {
+            elementsToDisplay.forEach(element => {
+                if (element) {
+                    element.style.display = 'block';
+                }
+            });
+            const inputElement = document.querySelector(`#${elementId.split('-')[0]} input, #${elementId.split('-')[0]} select`);
+            if (inputElement) {
+                inputElement.style.display = 'block';
+            }
+        }
+    }
+}
 
-<body>
-	<form action="/resultstable.html" method="POST" onsubmit="showLoadingScreen()">
-        <div class="chat-container">
-		<div class="chat-bubble bot">
-			<h1>Im alora your personal dietien</h1>
-			<p>Hello there! Let's get started on your health goals.</p>
-		</div>
-		<div class="chat-bubble user">
-			<p>First off, what are your specific health goals? Are you looking to lose weight, gain muscle mass, or improve your overall health?</p>
-			<label for="goals">My goals are:</label><br>
-			<input type="text" id="goals" name="goals"><br>
-		</div>
-		<div class="chat-bubble bot">
-			<p>What type of food do you enjoy? Do you have any favorite cuisines or dishes?</p>
-			<label for="food-preferences">I enjoy eating:</label><br>
-			<input type="text" id="food-preferences" name="food-preferences"><br>
-		</div>
-		<div class="chat-bubble user">
-			<p>Do you have any dietary restrictions or allergies that we should know about?</p>
-			<label for="dietary-restrictions">I can't eat:</label><br>
-			<input type="text" id="dietary-restrictions" name="dietary-restrictions"><br>
-		</div>
-		<div class="chat-bubble bot">
-			<p>May I ask how old you are? This information is important in estimating your caloric needs.</p>
-			<label for="age">I am:</label><br>
-			<input type="number" id="age" name="age"><br>
-		</div>
-		<div class="chat-bubble user">
-			<p>What is your gender?</p>
-			<label for="gender">I am:</label><br>
-			<select id="gender" name="gender">
-				<option value="male">Male</option>
-				<option value="female">Female</option>
-				<option value="other">Other</option>
-			</select><br>
-		</div>
-		<div class="chat-bubble bot">
-			<p>How tall are you?</p>
-			<label for="height">I am:</label><br>
-			<input type="number" id="height" name="height"><br>
-		</div>
-		<div class="chat-bubble user">
-			<p>And how much do you weigh?</p>
-			<label for="weight">I weigh:</label><br>
-			<input type="number" id="weight" name="weight"><br>
-		</div>		<div class="chat-bubble user">
-			<p>how much time would you like to spend cooking each meal?</p>
-			<label for="time">I would like to spend this long cooking meals</label><br>
-			<input type="text" id="time" name="time"><br>
-		</div>
-		<div class="chat-bubble bot">
-			<p>Finally, can you tell me a bit about your activity level? This includes both exercise and non-exercise physical activity, such as walking, standing, and fidgeting.</p>
-			<label for="activity-level">My activity level is:</label><br>
-			<input type="text" id="activity-level" name="activity-level"><br>
-		</div>
-		<div class="chat-bubble user">
-			<input type="submit" value="Submit">
+// Update the input field based on the current question
+function updateInputField(questionNumber) {
+    const inputLabel = document.getElementById('input-label');
+    const inputText = document.querySelector('#input-container input[type=text]');
+    const inputSelect = document.getElementById('input-select');
+
+    inputText.style.display = 'none';
+    inputSelect.style.display = 'none';
+
+    if (questionNumber === 5) { // Gender question
+        inputLabel.textContent = 'I am:';
+        inputSelect.style.display = 'block';
+    } else {
+        inputLabel.textContent = [
+            'My goals are:',
+            'I enjoy eating:',
+            "I can't eat:",
+            'I am:',
+            'I am:', // Gender question, but we're using select for it
+            'I am:',
+            'I weigh:',
+            'I would like to spend this long cooking meals:',
+            'My activity level is:'
+        ][questionNumber - 1];
+
+        inputText.style.display = 'block';
+        inputText.value = ''; // Clear the input value
+    }
+}
+
+// Show the current question
+function showQuestion(questionId) {
+    if (currentQuestion > 1) {
+        const prevQuestionId = questions[currentQuestion - 2];
+        const prevInputElement = document.querySelector(`#${prevQuestionId} input, #${prevQuestionId} select`);
+        if (prevInputElement) {
+            prevInputElement.style.display = 'none';
+        }
+    }
+
+    document.getElementById(questionId).style.display = 'block';
+    document.getElementById(`${questionId}-text`).innerHTML = '';
+    typeWriter(`${questionId}-text`, document.getElementById(`${questionId}-text`).getAttribute('data-text'), [document.querySelector(`#${questionId} label`)], 0);
+    updateInputField(currentQuestion); // moved this line
+}
 
 
-	</form>
-	<div id="loading-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(255, 255, 255, 0.9); z-index: 1000;">
-        <div class="loading-container">
-            <div class="infinity-spinner">
-                <div></div>
-                <div></div>
-                <div></div>
+// Hide the current question
+function hideQuestion(questionId) {
+    document.getElementById(questionId).style.display = 'none';
+}
+
+// Validate the answer
+function handleAnswer(questionId) {
+    const inputElement = document.querySelector(`#${questionId} input, #${questionId} select`);
+
+    if (inputElement && inputElement.style.display !== 'none') {
+        if (inputElement.value.trim() !== '') {
+            return true;
+        } else {
+            alert('Please answer the question before proceeding.');
+            return false;
+        }
+    }
+    return true;
+}
+// Handle the next button click
+function nextButtonClick() {
+    if (!handleAnswer(questions[currentQuestion - 1])) {
+        return;
+    }
+
+    let userInput = document.getElementById("user-input");
+    let inputSelect = document.getElementById("input-select");
+    let inputElement;
+
+    if (currentQuestion === 5) { // Gender question
+        inputElement = inputSelect;
+    } else {
+        inputElement = userInput;
+    }
+
+    // Save the user input to the corresponding inputIds array element
+    document.getElementById(inputIds[currentQuestion - 1]).value = inputElement.value;
+
+    hideQuestion(questions[currentQuestion - 1]); // Hide the previous question
+
+    currentQuestion++;
+
+    if (currentQuestion >= questions.length) {
+        document.getElementById("submit-button").style.display = "block";
+    } else {
+        document.getElementById("submit-button").style.display = "none";
+    }
+
+    showQuestion(questions[currentQuestion - 1]);
+}
+function prevButtonClick() {
+    if (currentQuestion > 0) {
+        let userInput = document.getElementById("user-input");
+        let inputSelect = document.getElementById("input-select");
+        let inputElement;
+
+        hideQuestion(questions[currentQuestion - 1]); // Hide the current question
+
+        currentQuestion--;
+
+        if (currentQuestion === 4) {
+            inputElement = inputSelect;
+        } else {
+            inputElement = userInput;
+        }
+
+        // Load the saved value from the inputIds array element for the current question
+        inputElement.value = document.getElementById(inputIds[currentQuestion - 1]).value;
+        showQuestion(questions[currentQuestion - 1]);
+    }
+}
+
+// Submit the form
+function submitForm() {
+    if (handleAnswer()) {
+        showLoadingScreen();
+        setTimeout(() => {
+            document.querySelector('form').submit();
+        }, 1000);
+    }
+}
+
+// Show the first question on window load
+window.onload = () => {
+    showQuestion(questions[0]);
+    currentQuestion++;
+};
+        </script>
+    </head>
+    <body>
+        <form action="/resultstable.html" method="POST">
+            <div class="chat-container">
+                <div class="chat-bubble bot" id="question1" style="display: none;">
+                    <h1>Alora-ai</h1>
+                    <p id="question1-text" data-text="Hi there! My names Alora. In order to get started im going to have to ask a few questions. Let's start with your goals. Please try to be as specific as posible it helps improve results :)"></p>
+                
+                </div>
+                <div class="chat-bubble bot" id="question2" style="display: none;">
+                    <p id="question2-text" data-text="What type of food do you enjoy? Do you have any favorite cuisines or dishes?"></p>
+                    
+                </div>
+                <div class="chat-bubble bot" id="question3" style="display: none;">
+                    <p id="question3-text" data-text="Do you have any dietary restrictions or allergies that we should know about?"></p>
+                    
+                </div>
+                <div class="chat-bubble bot" id="question4" style="display: none;">
+                    <p id="question4-text" data-text="May I ask how old you are? This information is important in estimating your caloric needs."></p>
+                    
+                </div>
+                <div class="chat-bubble bot" id="question5" style="display: none;">
+                    <p id="question5-text" data-text="What is your gender?"></p>
+                </div>
+        
+                <div class="chat-bubble bot" id="question6" style="display: none;">
+                    <p id="question6-text" data-text="How tall are you?"></p>
+                    
+                </div>
+        
+                <div class="chat-bubble bot" id="question7" style="display: none;">
+                    <p id="question7-text" data-text="And how much do you weigh?"></p>
+                    
+                </div>
+        
+                <div class="chat-bubble bot" id="question8" style="display: none;">
+                    <p id="question8-text" data-text="How much time would you like to spend cooking each meal?"></p>
+                    
+                </div>
+        
+                <div class="chat-bubble bot" id="question9" style="display: none;">
+                    <p id="question9-text" data-text="Finally, can you tell me a bit about your activity level? This includes both exercise and non-exercise physical activity, such as walking, standing, and fidgeting."></p>
+                    
+                </div>
             </div>
-            <p>Loading, please wait...</p>
-        </div>
-    </div>
-</body>
-</html>
+            <input type="hidden" id="goals" name="goals">
+            <input type="hidden" id="food-preferences" name="food-preferences">
+            <input type="hidden" id="dietary-restrictions" name="dietary-restrictions">
+            <input type="hidden" id="age" name="age">
+            <input type="hidden" id="gender" name="gender">
+            <input type="hidden" id="height" name="height">
+            <input type="hidden" id="weight" name="weight">
+            <input type="hidden" id="time" name="time">
+            <input type="hidden" id="activity-level" name="activity-level">
+            
+            <div class="user-input-container" id="input-container">
+                <label for="user-input" id="input-label"></label>
+                <input type="text" id="user-input" name="user-input" class="input-box bottom-input">
+                
+                <select id="input-select" class="input-box bottom-input" name="gender" style="display: none;">
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select>
+                
+                <div class="question-buttons">
+                    <input type="button" value="Previous" onclick="prevButtonClick()">
+                    <input type="button" value="Next" onclick="nextButtonClick()">
+                    <!-- Add a submit button -->
+                    <input type="submit" value="Submit" id="submit-button" style="display: none;">
+                </div>
+            </form>
+            <div id="loading-overlay" style="display: none;">
+                <div class="loading-container">
+                    <div class="infinity-spinner">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                    <p>Loading, please wait...</p>
+                </div>
+            </div>
+            {% endblock %}

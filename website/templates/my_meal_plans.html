@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container mt-5">
+    <div class="white-box" style="background-color: white; padding: 20px; border-radius: 5px;">
+      <h2 class="text-center mb-4">My Meal Plans</h2>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Created On</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for meal_plan in meal_plans %}
+            <tr>
+              <th scope="row">{{ loop.index }}</th>
+              <td>{{ meal_plan.created_on.strftime('%Y-%m-%d') }}</td>
+              <td>
+                <a href="{{ url_for('views.view_meal_plan', meal_plan_id=meal_plan.id) }}" class="btn btn-info">View</a>
+                <a href="{{ url_for('views.delete_meal_plan', meal_plan_id=meal_plan.id) }}" class="btn btn-danger">Delete</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

@@ -1,3 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,12 +11,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Day 3 Meal Plan</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
     <input type="hidden" id="mealPlanId" value="{{ meal_plan_id }}">
 
-    <div class="container">
+    <div class="container-meal-plan">
         <h1>Day 3 Meal Plan</h1>
         <button id="previousDay" onclick="previousDay()">Previous Day</button>
         <button id="nextDay" onclick="nextDay()">Next Day</button>
@@ -57,3 +62,4 @@ function nextDay() {
     </script>
 </body>
 </html>
+{% endblock %}

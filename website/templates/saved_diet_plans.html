@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Saved Diet Plans</h1>
+  {% for diet_plan in diet_plans %}
+    <h3>Day {{ diet_plan.day }}</h3>
+    <pre>{{ diet_plan.diet_plan }}</pre>
+  {% endfor %}
+{% endblock %}
