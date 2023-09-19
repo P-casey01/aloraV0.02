@@ -3,17 +3,18 @@ from flask import Flask, request, render_template, session, jsonify
 import openai
 import logging
 import secrets
-from website.models import MealPlan, Meal
+from website.models import MealPlan
 import re
 from flask import flash, redirect, url_for
 from flask_login import current_user
 from website.models import User_details, db
-from website.models import Meal, MealPlan
 import asyncio
 import aiohttp
-
-
-
+import json
+import uuid
+from flask import Flask
+from website.chatbot import get_gpt_response
+from flask_migrate import Migrate
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -87,18 +88,6 @@ async def get_all_meal_plans(goals, food_preferences, dietary_restrictions, age,
     return meal_plan
 
 
-def save_meal_data(meal_list, user_id):
-    meal_plan = MealPlan(user_id=user_id)
-    db.session.add(meal_plan)
-    db.session.commit()
-
-    for day, meal_data in enumerate(meal_list, start=1):
-        meal = Meal(day=day, meal_data=meal_data, meal_plan_id=meal_plan.id)
-        db.session.add(meal)
-
-    db.session.commit()
-
-
 def parse_meal_data(raw_data):
     meals = raw_data.split("---")
     meal_list = []
@@ -141,8 +130,6 @@ def parse_meal_data(raw_data):
 
 
 
-
-
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -161,8 +148,7 @@ def results():
     activity_level = request.form.get("activity-level", "")
 
     meal_plan = asyncio.run(get_all_meal_plans(goals, food_preferences, dietary_restrictions, age, gender, height, weight, time, activity_level))
-
-    # Save the user's form data to the User_details table in the database
+    
     user_details = User_details(
         user_id=current_user.id,
         age=age,
@@ -174,71 +160,89 @@ def results():
         food_preferences=food_preferences,
         time_spent_cooking=time
     )
-
-    db.session.add(user_details)
-    db.session.commit()
-
-    flash('Details saved successfully!', category='success')
-
+ 
     # Check input to ensure correct parsing
     for day in range(1, 8):
         daily_meal_data = meal_plan[f"day{day}"]
         print(f"Parsed meals for day{day}:")
         print(daily_meal_data)
 
-    meal_plan_id = secrets.token_urlsafe(8)
-    meal_plans[meal_plan_id] = meal_plan
+    meal_plan_id = str(uuid.uuid4())
+
+    # Save the meal plan to the MealPlan table in the database
+    meal_plan_entry = MealPlan(
+        id=str(uuid.uuid4()),
+        user_id=current_user.id,
+        meal_data=meal_plan
+    )
+    try:
+        db.session.add(meal_plan_entry)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+    print(f"Error: {e}")
+
 
     day1_meal_data = meal_plan["day1"]
 
     return render_template("day1.html", meal_data=day1_meal_data, meal_plan_id=meal_plan_id)
 
-
 @app.route("/day1")
 def day1():
     meal_plan_id = request.args.get("meal_plan_id")
-    meal_plan = meal_plans.get(meal_plan_id, {})
+    meal_plan_entry = db.session.get(MealPlan, meal_plan_id)
+    meal_plan = meal_plan_entry.meal_data if meal_plan_entry else {}
     day1_meal_data = meal_plan.get("day1", [])
     return render_template("day1.html", meal_data=day1_meal_data, meal_plan_id=meal_plan_id)
 
 @app.route("/day2")
 def day2():
     meal_plan_id = request.args.get("meal_plan_id")
-    meal_plan = meal_plans.get(meal_plan_id, {})
+    meal_plan_entry = db.session.get(MealPlan, meal_plan_id)
+    meal_plan = meal_plan_entry.meal_data if meal_plan_entry else {}
     day2_meal_data = meal_plan.get("day2", [])
+    print(meal_plan)
     return render_template("day2.html", meal_data=day2_meal_data, meal_plan_id=meal_plan_id)
 
 @app.route("/day3")
 def day3():
     meal_plan_id = request.args.get("meal_plan_id")
-    meal_plan = meal_plans.get(meal_plan_id, {})
+    meal_plan_entry = db.session.get(MealPlan, meal_plan_id)
+    meal_plan = meal_plan_entry.meal_data if meal_plan_entry else {}
     day3_meal_data = meal_plan.get("day3", [])
+    print(meal_plan)
     return render_template("day3.html", meal_data=day3_meal_data, meal_plan_id=meal_plan_id)
 @app.route("/day4")
 def day4():
     meal_plan_id = request.args.get("meal_plan_id")
-    meal_plan = meal_plans.get(meal_plan_id, {})
+    meal_plan_entry = db.session.get(MealPlan, meal_plan_id)
+    meal_plan = meal_plan_entry.meal_data if meal_plan_entry else {}
     day4_meal_data = meal_plan.get("day4", [])
+    print(meal_plan)
     return render_template("day4.html", meal_data=day4_meal_data, meal_plan_id=meal_plan_id)
 
 @app.route("/day5")
 def day5():
     meal_plan_id = request.args.get("meal_plan_id")
-    meal_plan = meal_plans.get(meal_plan_id, {})
+    meal_plan_entry = db.session.get(MealPlan, meal_plan_id)
+    meal_plan = meal_plan_entry.meal_data if meal_plan_entry else {}
     day5_meal_data = meal_plan.get("day5", [])
     return render_template("day5.html", meal_data=day5_meal_data, meal_plan_id=meal_plan_id)
+
 @app.route("/day6")
 def day6():
     meal_plan_id = request.args.get("meal_plan_id")
-    meal_plan = meal_plans.get(meal_plan_id, {})
+    meal_plan_entry = db.session.get(MealPlan, meal_plan_id)
+    meal_plan = meal_plan_entry.meal_data if meal_plan_entry else {}
     day6_meal_data = meal_plan.get("day6", [])
     return render_template("day6.html", meal_data=day6_meal_data, meal_plan_id=meal_plan_id)
-
 @app.route("/day7")
 def day7():
     meal_plan_id = request.args.get("meal_plan_id")
-    meal_plan = meal_plans.get(meal_plan_id, {})
+    meal_plan_entry = db.session.get(MealPlan, meal_plan_id)
+    meal_plan = meal_plan_entry.meal_data if meal_plan_entry else {}
     day7_meal_data = meal_plan.get("day7", [])
     return render_template("day7.html", meal_data=day7_meal_data, meal_plan_id=meal_plan_id)
 if __name__ == '__main__':
     app.run(debug=True)
+

@@ -186,6 +186,42 @@ function prevButtonClick() {
         showQuestion(questions[currentQuestion - 1]);
     }
 }
+function convertHeightToCm() {
+    var feet = document.getElementById("feet").value;
+    var inches = document.getElementById("inches").value;
+    var totalInches = feet * 12 + parseInt(inches);
+    var heightInCm = totalInches * 2.54;
+    document.getElementById("heightField").value = heightInCm.toFixed(2);
+}
+
+function convertWeightToKg() {
+    var pounds = document.getElementById("pounds").value;
+    var weightInKg = pounds * 0.45359237;
+    document.getElementById("weightField").value = weightInKg.toFixed(2);
+}
+
+function showHeightConverter() {
+    document.getElementById("heightConverter").style.display = "block";
+}
+
+function hideHeightConverter() {
+    document.getElementById("heightConverter").style.display = "none";
+}
+
+function showWeightConverter() {
+    document.getElementById("weightConverter").style.display = "block";
+}
+
+function hideWeightConverter() {
+    document.getElementById("weightConverter").style.display = "none";
+}
+window.onload = function() {
+    document.getElementById("height").addEventListener('focus', showHeightConverter);
+    document.getElementById("height").addEventListener('blur', hideHeightConverter);
+    document.getElementById("weight").addEventListener('focus', showWeightConverter);
+    document.getElementById("weight").addEventListener('blur', hideWeightConverter);
+    // Rest of your code...
+}
 
 // Submit the form
 function submitForm() {
@@ -261,19 +297,33 @@ window.onload = () => {
             <div class="user-input-container" id="input-container">
                 <label for="user-input" id="input-label"></label>
                 <input type="text" id="user-input" name="user-input" class="input-box bottom-input">
-                
+            
+                <div id="heightConverter" style="display: none;">
+                    <label for="feet">Feet</label>
+                    <input type="text" class="form-control" id="feet" oninput="convertHeightToCm()">
+                    <label for="inches">Inches</label>
+                    <input type="text" class="form-control" id="inches" oninput="convertHeightToCm()">
+                </div>
+            
+                <div id="weightConverter" style="display: none;">
+                    <label for="pounds">Pounds</label>
+                    <input type="text" class="form-control" id="pounds" oninput="convertWeightToKg()">
+                </div>
+            
                 <select id="input-select" class="input-box bottom-input" name="gender" style="display: none;">
                     <option value="male">Male</option>
                     <option value="female">Female</option>
                     <option value="other">Other</option>
                 </select>
-                
+            
                 <div class="question-buttons">
                     <input type="button" value="Previous" onclick="prevButtonClick()">
                     <input type="button" value="Next" onclick="nextButtonClick()">
                     <!-- Add a submit button -->
                     <input type="submit" value="Submit" id="submit-button" style="display: none;">
                 </div>
+            </div>
+            
             </form>
             <div id="loading-overlay" style="display: none;">
                 <div class="loading-container">

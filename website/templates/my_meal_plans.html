@@ -16,10 +16,14 @@
           {% for meal_plan in meal_plans %}
             <tr>
               <th scope="row">{{ loop.index }}</th>
-              <td>{{ meal_plan.created_on.strftime('%Y-%m-%d') }}</td>
+              <td>{{ meal_plan.created_at.strftime('%Y-%m-%d') }}</td>
               <td>
-                <a href="{{ url_for('views.view_meal_plan', meal_plan_id=meal_plan.id) }}" class="btn btn-info">View</a>
-                <a href="{{ url_for('views.delete_meal_plan', meal_plan_id=meal_plan.id) }}" class="btn btn-danger">Delete</a>
+                <a href="{{ url_for('day1', meal_plan_id=meal_plan.id) }}" class="btn btn-info">View</a>
+                <form action="{{ url_for('views.delete_meal_plan') }}" method="post">
+                  <input type="hidden" name="meal_plan_id" value="{{ meal_plan.id }}">
+                  <button type="submit" class="btn btn-danger">Delete</button>
+              </form>
+              
               </td>
             </tr>
           {% endfor %}

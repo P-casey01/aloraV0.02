@@ -3,6 +3,7 @@ from flask_login import UserMixin
 from sqlalchemy.sql import func
 from datetime import datetime
 
+
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(150), unique=True)
@@ -27,15 +28,10 @@ class User_details(db.Model, UserMixin):     # DB table for user details
     time_spent_cooking = db.Column(db.String(50))  # Add this line
     user = db.relationship("User", back_populates="details")   # Add this line to establish the relationship
 
-
-class Meal(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    day = db.Column(db.Integer, nullable=False)
-    meal_data = db.Column(db.JSON, nullable=False)
-    meal_plan_id = db.Column(db.Integer, db.ForeignKey('meal_plan.id'))
-
 class MealPlan(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    __tablename__ = "meal_plans"
+
+    id = db.Column(db.String, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    meals = db.relationship('Meal', backref='meal_plan', lazy=True)
+    created_at = db.Column(db.DateTime(timezone=True), server_default=func.now())
+    meal_data = db.Column(db.JSON)
