@@ -31,7 +31,7 @@ async def generate_meal_plan(goals, food_preferences, dietary_restrictions, age,
         async with session.post(
             'https://api.openai.com/v1/chat/completions',
             json={
-                "model": "gpt-4",
+                "model": "gpt-4-1106-preview",
                 "messages": [
                     {"role": "system", "content": """Hello, behave as Alora, an AI dietitian giving a diet plan for the following person. Ensure you calculate the BMR using the provided information and take this into account when designing the plan. The meal plan must include a breakfast, a morning snack, lunch, an afternoon snack, and dinner. For each meal, include the meal name, ingredients with their amounts in grams, nutritional content, and instructions for preparation. Start the meal plan with the meal name, ensuring to separate each meal with '---'. Use the format: 'Meal Name:', 'Ingredients in grams:', 'Nutritional Content:', 'Instructions:'. Please ensure your response is well-structured."""},
                     {"role": "user", "content": f"""I am {age} years old. I am a {gender} with a height of {height} cm who weighs {weight} kg. I have these dietary requirements: {dietary_restrictions}. I like to eat the following cuisines and types of foods: {food_preferences}. my activity level is: {activity_level}. My goals are {goals}. I would like to spend {time} cooking. Please provide a meal plan for day {day_number}. Start the meal plan with the meal name, ensuring to separate each meal with '---'. Use the format: 'Meal Name:', 'Ingredients in grams:', 'Nutritional Content:', 'Instructions:'. Please ensure your response is well-structured and the diet plan is no more than 50 calories over or under the calorie target for the specified goal. it is paramount that the deviation from the calculated estimated calorie intake is no more than 50 calories and the nutritional content is correct and includes all ingredients listed."""},
@@ -180,7 +180,7 @@ def results():
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-    print(f"Error: {e}")
+        print(f"Error:",e )
 
 
     day1_meal_data = meal_plan["day1"]
