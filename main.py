@@ -20,7 +20,7 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 app = create_app()
-openai.api_key = "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"
+openai.api_key = "(your open ai api key)"
 app.secret_key = secrets.token_urlsafe(24)
 
 
